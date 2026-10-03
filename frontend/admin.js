@@ -1,5 +1,5 @@
 'use strict';
-// NOTE: nothing here protects data. The server re-checks session, role and CSRF token on every write.
+
 const app = document.getElementById('app');
 let csrfToken = '', state = { tab: 'overview', labs: [], q: '', sem: '', sort: 'updated' };
 
@@ -28,7 +28,7 @@ function confirmDelete(msg) {
 }
 const fmtDate = d => new Date(d).toLocaleDateString();
 
-// ---- login ----
+
 function loginView() {
   const err = h('p', { class: 'err', role: 'alert' });
   const email = h('input', { type: 'email', id: 'em', required: true, autocomplete: 'username' });
@@ -41,7 +41,7 @@ function loginView() {
     h('button', { class: 'btn primary mt' }, 'Log in')));
 }
 
-// ---- shell ----
+
 async function start() {
   document.getElementById('side').hidden = false;
   state.labs = await api('/labs');
@@ -61,7 +61,7 @@ async function overviewTab(el) {
     h('button', { class: 'btn primary', onclick: () => programForm() }, 'New program'));
 }
 
-// ---- programs list: server-side search/filter/sort/pagination keeps hundreds of rows fast ----
+
 async function programsTab(el) {
   const sortMap = { updated: 'newest', title: 'title', order: '' };
   const data = await api(`/programs?q=${encodeURIComponent(state.q)}&semester=${state.sem}&sort=${sortMap[state.sort]}&limit=50`);
@@ -84,7 +84,6 @@ async function programsTab(el) {
       : h('div', { class: 'state' }, 'No programs found. Add your first one with “New program”.'));
 }
 
-// ---- program form with preview + uploads ----
 function programForm(p = {}) {
   if (!state.labs.length) { toast('Create a lab first'); state.tab = 'labs'; return render(); }
   const f = {}, errs = {}, field = (name, label, el, full) => { f[name] = el; errs[name] = h('span', { class: 'err' }); return h('div', { class: full ? 'full' : '' }, h('label', {}, label), el, errs[name]); };
@@ -121,7 +120,7 @@ function programForm(p = {}) {
   app.replaceChildren(h('h1', {}, p.id ? 'Edit program' : 'New program'), form, preview);
 }
 
-// ---- labs ----
+
 async function labsTab(el, editing = null) {
   state.labs = await api('/labs');
   const t = h('input', { placeholder: 'Lab name (e.g. Java)', maxlength: 150, 'aria-label': 'Lab name', value: editing?.title || '' });
