@@ -1,0 +1,37 @@
+:root { --bg:#f1f3f7; --surface:#fff; --ink:#18212f; --muted:#657083; --line:#dde2ea; --brand:#2a44ff; --side:#111a2e; --danger:#c62828; --mono:'Fira Code',ui-monospace,monospace; }
+* { box-sizing:border-box; }
+body { margin:0; font:14.5px/1.5 Inter,system-ui,sans-serif; color:var(--ink); background:var(--bg); }
+.shell { display:flex; min-height:100vh; }
+#side { width:230px; flex-shrink:0; background:var(--side); color:#cfd8ea; display:flex; flex-direction:column; padding:1.2rem 1rem; position:sticky; top:0; height:100vh; }
+#side[hidden] { display:none; }
+.logo { font-weight:600; font-size:1.15rem; color:#fff; margin-bottom:1.5rem; } .logo small { color:#8b9bff; font-weight:500; margin-left:.3rem; }
+#side nav { display:flex; flex-direction:column; gap:.2rem; }
+#side nav button { text-align:left; background:none; border:0; color:inherit; padding:.55rem .8rem; border-radius:8px; cursor:pointer; font:inherit; }
+#side nav button:hover { background:#1b2842; }
+#side nav button[aria-current="true"] { background:var(--brand); color:#fff; }
+.side-foot { margin-top:auto; display:flex; flex-direction:column; gap:.7rem; font-size:.85rem; } .side-foot a { color:#9fb0d0; }
+main { flex:1; min-width:0; padding:1.5rem clamp(1rem,3vw,2.5rem) 4rem; max-width:1100px; }
+h1 { font-size:1.6rem; margin:0 0 1rem; letter-spacing:-.01em; } h2 { font-size:1.05rem; }
+a { color:var(--brand); } .muted { color:var(--muted); }
+:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+input, select, textarea { width:100%; padding:.5rem .65rem; border:1px solid var(--line); border-radius:8px; background:var(--surface); font:inherit; color:inherit; }
+textarea { font-family:var(--mono); font-size:.85rem; min-height:7rem; resize:vertical; }
+label { display:block; font-weight:500; font-size:.85rem; margin-bottom:.25rem; } .mt { margin-top:.8rem; }
+.btn { display:inline-block; padding:.45rem .95rem; border:1px solid var(--line); border-radius:8px; background:var(--surface); color:var(--ink); cursor:pointer; font:inherit; text-decoration:none; }
+.btn:hover { border-color:var(--brand); } .btn.primary { background:var(--brand); color:#fff; border-color:var(--brand); }
+.btn.danger { color:var(--danger); border-color:var(--danger); } .btn.sm { padding:.15rem .6rem; font-size:.82rem; }
+#side .btn { background:#1b2842; color:#dbe4f6; border-color:#2a3a5c; }
+.filters { display:flex; gap:.6rem; flex-wrap:wrap; margin:0 0 1rem; } .filters > * { width:auto; flex:1 1 150px; } .filters > .btn { flex:0 0 auto; }
+.row { display:flex; gap:.5rem; flex-wrap:wrap; align-items:center; }
+.section { background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:1.1rem 1.3rem; margin-top:1rem; }
+.login-card { max-width:380px; margin:12vh auto 0; }
+.tablewrap { overflow-x:auto; border:1px solid var(--line); border-radius:12px; background:var(--surface); }
+table { width:100%; border-collapse:collapse; } th, td { text-align:left; padding:.6rem .8rem; border-bottom:1px solid var(--line); } th { font-size:.8rem; color:var(--muted); font-weight:600; } tr:last-child td { border-bottom:0; }
+.formgrid { display:grid; gap:.9rem; grid-template-columns:repeat(2,1fr); } .formgrid .full { grid-column:1/-1; }
+.err { color:var(--danger); font-size:.82rem; }
+.stats { display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1rem; } .stats div { background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:.8rem 1.4rem; min-width:130px; } .stats b { display:block; font-size:2rem; line-height:1.1; }
+.state { text-align:center; padding:2.5rem 1rem; color:var(--muted); }
+.pv { white-space:pre-wrap; font-family:var(--mono); font-size:.85rem; }
+dialog { border:1px solid var(--line); border-radius:12px; max-width:420px; } dialog::backdrop { background:rgba(10,15,30,.5); }
+#toast { position:fixed; bottom:1rem; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; padding:.5rem 1rem; border-radius:8px; opacity:0; pointer-events:none; transition:opacity .2s; } #toast.show { opacity:1; }
+@media (max-width:760px) { .shell { flex-direction:column; } #side { width:100%; height:auto; position:static; flex-direction:row; flex-wrap:wrap; align-items:center; gap:.6rem; } .logo { margin:0; } #side nav { flex-direction:row; } .side-foot { margin:0 0 0 auto; flex-direction:row; align-items:center; } .formgrid { grid-template-columns:1fr; } }

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>LabHub Admin</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Fira+Code:wght@400;500&display=swap">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <div class="shell">
+    <aside id="side" hidden>
+      <div class="logo">LabHub <small>Admin</small></div>
+      <nav>
+        <button data-tab="overview">Dashboard</button>
+        <button data-tab="programs">Programs</button>
+        <button data-tab="labs">Labs</button>
+      </nav>
+      <div class="side-foot"><a href="index.html" target="_blank" rel="noopener">Open public site</a><button id="logoutBtn" class="btn sm">Log out</button></div>
+    </aside>
+    <main id="app"></main>
+  </div>
+  <dialog id="confirm"><form method="dialog"><p id="confirmMsg"></p><div class="row"><button value="ok" class="btn danger">Delete</button><button value="cancel" class="btn">Cancel</button></div></form></dialog>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <script src="admin.js"></script>
+</body>
+</html>
