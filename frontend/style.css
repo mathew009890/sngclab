@@ -37,7 +37,7 @@ h2 { font:600 1rem var(--head); margin:0; }
 .lab:hover { border-color:var(--brand); }
 .lab h3 { margin:.4rem 0 .2rem; font:600 1.3rem var(--head); } .lab p { margin:0; color:var(--muted); font-size:.92rem; }
 .tag { display:inline-block; padding:.05rem .6rem; border-radius:99px; background:var(--soft); color:var(--brand); font-size:.75rem; font-weight:600; }
-/* lab page: program list + reading pane */
+
 .lab-layout { display:grid; grid-template-columns:270px minmax(0,1fr); gap:2rem; margin-top:1.5rem; align-items:start; }
 .plist { position:sticky; top:4.5rem; display:flex; flex-direction:column; gap:.2rem; max-height:calc(100vh - 6rem); overflow-y:auto; }
 .plist h2 { padding:0 .7rem .4rem; color:var(--muted); font-size:.85rem; }

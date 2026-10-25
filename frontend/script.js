@@ -1,7 +1,7 @@
 'use strict';
 const app = document.getElementById('app');
 
-// Build DOM with textContent only (never innerHTML) so stored content cannot inject HTML.
+
 function h(tag, attrs = {}, ...kids) {
   const el = document.createElement(tag);
   for (const [k, v] of Object.entries(attrs)) {
@@ -28,10 +28,10 @@ const fmtDate = d => new Date(d).toLocaleDateString(undefined, { year: 'numeric'
 const crumbs = (...parts) => h('nav', { class: 'crumbs', 'aria-label': 'Breadcrumb' }, parts.map((p, i) => [i ? h('span', { class: 'sep' }, '/') : null, p]));
 
 const setActiveSem = () => {};
-// Back link goes to the parent page (reliable even if the page was opened directly)
+
 const back = (href, label) => h('a', { class: 'back', href }, `← ${label}`);
 
-// copyable section: only drawn when it has content, so code/output/etc. are optional per program
+
 function copyBtn(getText, label = 'Copy code', cls = '') {
   const b = h('button', { class: 'copy-btn ' + cls, type: 'button' }, label);
   b.addEventListener('click', async () => {
@@ -55,7 +55,7 @@ function programBody(p) {
   return parts.length ? parts : [h('p', { class: 'muted' }, 'Nothing has been added to this exercise yet.')];
 }
 
-// ---- views ----
+
 async function homeView() {
   setActiveSem(null);
   const [sems, labs] = await Promise.all([api('/semesters'), api('/labs')]);
@@ -79,7 +79,6 @@ async function semesterView(id) {
       : empty('No labs have been added to this semester yet.'));
 }
 
-// lab page: program list on the left, selected program on the right (a dropdown on phones)
 async function labView(labId, progId) {
   const [lab, list] = await Promise.all([api(`/labs/${labId}`), api(`/programs?lab=${labId}&limit=50`)]);
   setActiveSem(lab.semester_id);
@@ -112,6 +111,7 @@ async function searchView(q) {
       : empty('Nothing matched. Try a shorter or different keyword.'));
 }
 
+<<<<<<< HEAD
 function showLocked(msg) {
   document.title = 'Temporarily closed · LabHub';
   show(h('section', { class: 'locked' }, h('div', { class: 'lock-icon', 'aria-hidden': 'true' }, '🔒'), h('h1', {}, 'Temporarily closed'),
@@ -119,6 +119,9 @@ function showLocked(msg) {
 }
 
 // ---- router ----
+=======
+
+>>>>>>> b084a922687c226f1a3c9638c526432a7c6e656f
 async function route() {
   const [pathPart, query = ''] = (location.hash.slice(1) || '/').split('?');
   const [, view, arg, arg2] = pathPart.split('/');

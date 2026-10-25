@@ -1,5 +1,9 @@
 'use strict';
+<<<<<<< HEAD
 // Nothing here protects data: the server re-checks session, role and CSRF token on every write.
+=======
+
+>>>>>>> b084a922687c226f1a3c9638c526432a7c6e656f
 const app = document.getElementById('app');
 let csrfToken = '', state = { tab: 'overview', labs: [], q: '', sem: '', lab: '' };
 const LANGS = { java: 'Java', python: 'Python', c: 'C', cpp: 'C++', sql: 'SQL', javascript: 'JavaScript', html: 'HTML', text: 'No code (text only)' };
@@ -33,7 +37,7 @@ function confirmAction(msg, ok = 'Delete', danger = true) {
 const fmtDate = d => new Date(d).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
 const goTab = tab => { state.tab = tab; render(); };
 
-// ---- login ----
+
 function loginView() {
   const err = h('p', { class: 'err', role: 'alert' });
   const email = h('input', { type: 'email', id: 'em', required: true, autocomplete: 'username' });
@@ -45,7 +49,17 @@ function loginView() {
     h('h1', {}, 'Admin login'), h('label', { for: 'em' }, 'Email'), email, h('label', { for: 'pw', class: 'mt' }, 'Password'), pw, err,
     h('button', { class: 'btn primary mt' }, 'Log in')));
 }
+<<<<<<< HEAD
 async function start() { document.getElementById('side').hidden = false; state.labs = await api('/labs'); render(); }
+=======
+
+
+async function start() {
+  document.getElementById('side').hidden = false;
+  state.labs = await api('/labs');
+  render();
+}
+>>>>>>> b084a922687c226f1a3c9638c526432a7c6e656f
 function render() {
   document.querySelectorAll('#side [data-tab]').forEach(b => b.setAttribute('aria-current', b.dataset.tab === state.tab));
   const holder = h('div'); app.replaceChildren(holder);
@@ -78,7 +92,11 @@ async function overviewTab(el) {
       h('li', { class: ok ? 'done' : '' }, h('span', { class: 'tick' }, ok ? '✓' : ''), h('span', {}, t), h('a', { href: '#', onclick: e => { e.preventDefault(); goTab(tab); } }, ok ? 'Manage' : 'Start →'))))));
 }
 
+<<<<<<< HEAD
 // ---- programs list ----
+=======
+
+>>>>>>> b084a922687c226f1a3c9638c526432a7c6e656f
 async function programsTab(el) {
   const d = await api(`/programs?q=${encodeURIComponent(state.q)}&semester=${state.sem}&lab=${state.lab}&sort=newest&limit=50`);
   const q = h('input', { type: 'search', placeholder: 'Search title, aim or code…', value: state.q, 'aria-label': 'Search programs' });
@@ -101,7 +119,10 @@ async function programsTab(el) {
       : h('div', { class: 'state' }, h('p', {}, 'No programs found.'), h('button', { class: 'btn primary', onclick: () => programForm() }, '+ Add your first program')));
 }
 
+<<<<<<< HEAD
 // ---- program form: grouped steps, language picker, screenshot thumbnails, sticky save bar ----
+=======
+>>>>>>> b084a922687c226f1a3c9638c526432a7c6e656f
 function programForm(p = {}) {
   if (!state.labs.length) { toast('Create a lab first'); return goTab('labs'); }
   const f = {}, errs = {};
@@ -140,7 +161,7 @@ function programForm(p = {}) {
   app.replaceChildren(h('h1', {}, p.id ? 'Edit program' : 'New program'), form, preview);
 }
 
-// ---- labs ----
+
 async function labsTab(el, editing = null) {
   state.labs = await api('/labs');
   const t = h('input', { placeholder: 'e.g. Java', maxlength: 150, value: editing?.title || '' }), c = h('input', { placeholder: 'e.g. CS301', maxlength: 30, value: editing?.code || '' });
