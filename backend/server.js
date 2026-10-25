@@ -94,6 +94,20 @@ api.post('/auth/login', loginLimiter, csrf, wrap(async (req, res) => {
 }));
 api.post('/auth/logout', csrf, (req, res) => req.session.destroy(() => { res.clearCookie('labhub.sid'); res.status(204).end(); }));
 
+// ---------- Site lock (stored in DB, cached in memory) ----------
+let siteLock = { locked: false, message: '' };
+const DEFAULT_MSG = 'The website is temporarily closed. Please contact the admin.';
+async function loadLock() {
+  await pool.query('CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL)');
+  const { rows } = await pool.query("SELECT key, value FROM settings WHERE key IN ('site_locked','lock_message')");
+  const m = Object.fromEntries(rows.map(r => [r.key, r.value]));
+  siteLock = { locked: m.site_locked === 'true', message: m.lock_message || DEFAULT_MSG };
+}
+// Blocks everyone except a logged-in admin. Enforced here, so it cannot be bypassed from the browser.
+const lockGuard = (req, res, next) => siteLock.locked && req.session.user?.role !== 'admin'
+  ? fail(res, 503, 'Website temporarily locked', { locked: true, message: siteLock.message }) : next();
+api.use(['/semesters', '/labs', '/programs'], (req, res, next) => (req.method === 'GET' ? lockGuard(req, res, next) : next()));
+
 // ---------- Public read-only routes ----------
 api.get('/semesters', wrap(async (req, res) => {
   const { rows } = await pool.query(`
@@ -219,6 +233,14 @@ admin.delete('/files/:id', wrap(async (req, res) => {
   fs.unlink(path.join(UPLOAD_DIR, r.rows[0].filename), () => {});
   res.status(204).end();
 }));
+admin.get('/settings', (req, res) => res.json(siteLock));
+admin.put('/settings', wrap(async (req, res) => {
+  const locked = req.body.locked === true;
+  const message = String(req.body.message ?? '').trim().slice(0, 300) || DEFAULT_MSG;
+  await pool.query("INSERT INTO settings(key,value) VALUES('site_locked',$1),('lock_message',$2) ON CONFLICT (key) DO UPDATE SET value=EXCLUDED.value", [String(locked), message]);
+  siteLock = { locked, message };
+  res.json(siteLock);
+}));
 admin.get('/stats', wrap(async (req, res) => {
   const { rows } = await pool.query(`SELECT (SELECT COUNT(*) FROM labs)::int labs, (SELECT COUNT(*) FROM programs)::int programs, (SELECT COUNT(*) FROM program_files)::int files`);
   res.json(rows[0]);
@@ -226,7 +248,7 @@ admin.get('/stats', wrap(async (req, res) => {
 
 app.use('/api', api, admin);
 app.use('/api', (req, res) => fail(res, 404, 'Not found'));
-app.use('/uploads', express.static(UPLOAD_DIR, { index: false, dotfiles: 'deny', setHeaders: r => r.setHeader('X-Content-Type-Options', 'nosniff') }));
+app.use('/uploads', lockGuard, express.static(UPLOAD_DIR, { index: false, dotfiles: 'deny', setHeaders: r => r.setHeader('X-Content-Type-Options', 'nosniff') }));
 app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, '../frontend/admin.html')));
 app.use(express.static(path.join(__dirname, '../frontend')));
 
@@ -240,4 +262,5 @@ app.use((err, req, res, next) => {
   fail(res, 500, 'Something went wrong');
 });
 
-app.listen(process.env.PORT || 3000, () => console.log('Lab Hub running on port', process.env.PORT || 3000));
+loadLock().then(() => app.listen(process.env.PORT || 3000, () => console.log('Lab Hub running on port', process.env.PORT || 3000)))
+  .catch(e => { console.error(e); process.exit(1); });

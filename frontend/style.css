@@ -80,3 +80,7 @@ h2 { font:600 1rem var(--head); margin:0; }
 
 .back { display:inline-block; margin-bottom:.8rem; padding:.35rem .9rem; border:1px solid var(--line); border-radius:99px; background:var(--surface); color:var(--ink); text-decoration:none; font-size:.88rem; font-weight:500; }
 .back:hover { border-color:var(--brand); color:var(--brand); }
+
+.locked { text-align:center; padding:5rem 1rem; max-width:560px; margin:0 auto; }
+.locked .lead { margin:0 auto; }
+.lock-icon { font-size:3.2rem; }

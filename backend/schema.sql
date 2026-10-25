@@ -53,3 +53,4 @@ CREATE TABLE IF NOT EXISTS program_files (
 CREATE INDEX IF NOT EXISTS files_program_idx ON program_files(program_id);
 CREATE TABLE IF NOT EXISTS session (sid varchar PRIMARY KEY, sess json NOT NULL, expire timestamp(6) NOT NULL);
 CREATE INDEX IF NOT EXISTS session_expire_idx ON session(expire);
+CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL);

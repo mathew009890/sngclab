@@ -16,7 +16,10 @@ const show = (...nodes) => app.replaceChildren(...nodes.flat(Infinity).filter(Bo
 async function api(path) {
   const res = await fetch('/api' + path, { credentials: 'same-origin' });
   const body = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(body.error || 'Request failed');
+  if (!res.ok) {
+    if (res.status === 503 && body.details?.locked) { const e = new Error(body.error); e.locked = true; e.lockMessage = body.details.message; throw e; }
+    throw new Error(body.error || 'Request failed');
+  }
   return body;
 }
 function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 1800); }
@@ -109,6 +112,12 @@ async function searchView(q) {
       : empty('Nothing matched. Try a shorter or different keyword.'));
 }
 
+function showLocked(msg) {
+  document.title = 'Temporarily closed · LabHub';
+  show(h('section', { class: 'locked' }, h('div', { class: 'lock-icon', 'aria-hidden': 'true' }, '🔒'), h('h1', {}, 'Temporarily closed'),
+    h('p', { class: 'lead' }, msg || 'The website is temporarily locked. Please contact the admin.')));
+}
+
 // ---- router ----
 async function route() {
   const [pathPart, query = ''] = (location.hash.slice(1) || '/').split('?');
@@ -121,7 +130,7 @@ async function route() {
     else if (view === 'program' && /^\d+$/.test(arg)) { const p = await api(`/programs/${arg}`); location.replace(`#/lab/${p.lab_id}/${p.id}`); return; }
     else if (view === 'search') await searchView(new URLSearchParams(query).get('q') || '');
     else show(empty('That page does not exist.'));
-  } catch (e) { show(h('div', { class: 'state' }, h('p', {}, e.message), h('button', { class: 'btn', onclick: route }, 'Try again'))); }
+  } catch (e) { if (e.locked) { showLocked(e.lockMessage); return; } show(h('div', { class: 'state' }, h('p', {}, e.message), h('button', { class: 'btn', onclick: route }, 'Try again'))); }
   window.scrollTo(0, 0);
 }
 document.getElementById('searchForm').addEventListener('submit', e => {
