@@ -48,7 +48,7 @@ function loginView() {
 async function start() { document.getElementById('side').hidden = false; state.labs = await api('/labs'); render(); }
 function render() {
   document.querySelectorAll('#side [data-tab]').forEach(b => b.setAttribute('aria-current', b.dataset.tab === state.tab));
-  const holder = h('div'); app.replaceChildren(holder);
+  const holder = h('div', {}, h('div', { class: 'spinner', role: 'status', 'aria-label': 'Loading' })); app.replaceChildren(holder);
   ({ overview: overviewTab, programs: programsTab, labs: labsTab })[state.tab](holder).catch(e => put(holder, h('p', { class: 'err' }, e.message)));
 }
 document.querySelectorAll('#side [data-tab]').forEach(b => b.addEventListener('click', () => goTab(b.dataset.tab)));
@@ -163,6 +163,14 @@ async function labsTab(el, editing = null) {
       : h('div', { class: 'state' }, 'No labs yet. Add your first one above.'));
   if (editing) t.focus();
 }
+
+// ---- theme: follows the system until you pick one; choice is remembered in this browser ----
+const root = document.documentElement, themeBtn = document.getElementById('themeBtn');
+const sysDark = () => matchMedia('(prefers-color-scheme: dark)').matches;
+const isDark = () => (root.dataset.theme ? root.dataset.theme === 'dark' : sysDark());
+function applyTheme(t) { if (t) root.dataset.theme = t; themeBtn.textContent = isDark() ? '☀ Light mode' : '☾ Dark mode'; }
+try { applyTheme(localStorage.getItem('theme')); } catch { applyTheme(null); }
+themeBtn.addEventListener('click', () => { const n = isDark() ? 'light' : 'dark'; try { localStorage.setItem('theme', n); } catch {} applyTheme(n); });
 
 document.getElementById('logoutBtn').addEventListener('click', async () => { await api('/auth/logout', { method: 'POST' }); location.reload(); });
 (async () => {
